@@ -10,32 +10,38 @@ source:
   sha256: af80d5687ec75df6c3e54119ee895e42f79742ed326684c79425414b5c20f1e3
 
 build:
-  noarch: python
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv
+  skip: True  # [py<38 or s390x]
+  script: {{ PYTHON }} -m pip install -vv --no-deps --no-build-isolation .
 
 requirements:
   host:
-    - hatch
-    - hatch-vcs
+    - python
     - pip
-    - python >=3.8
+    - hatchling
+    - hatch-vcs
   run:
-    - pyconify >=0.1.4
+    - python
     - pygments >=2.4.0
-    - python >=3.8
     - qtpy >=1.1.0
-    - typing_extensions
+    - typing_extensions >=3.7.4.3,!=3.10.0.0
 
 test:
   imports:
     - superqt
   requires:
     - pip
+    - pytest
+    - pytest-qt
     - pyqt
+    - numpy
+  source_files:
+    - pyproject.toml
+    - tests
   commands:
-    - pip list
     - pip check
+    # Skip tests that need pint.
+    - pytest -v --ignore=tests/test_quantity.py tests -k "not test_multistate"  # [win]
 
 about:
   home: https://github.com/pyapp-kit/superqt
@@ -49,6 +55,7 @@ about:
     QtWidgets module, such as range sliders, float sliders, and other 
     extended widgets.
   dev_url: https://github.com/pyapp-kit/superqt
+  doc_url: https://pyapp-kit.github.io/superqt
 
 extra:
   recipe-maintainers:
