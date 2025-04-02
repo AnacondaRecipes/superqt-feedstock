@@ -1,5 +1,5 @@
 {% set name = "superqt" %}
-{% set version = "0.6.7" %}
+{% set version = "0.7.3" %}
 
 package:
   name: {{ name|lower }}
@@ -7,11 +7,11 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: af80d5687ec75df6c3e54119ee895e42f79742ed326684c79425414b5c20f1e3
+  sha256: 14f617a46b1056783a5e32fd384038c4a62bcd320f9cd1e12cfb7d77fd8caa2c
 
 build:
   number: 0
-  skip: True  # [py<38 or s390x]
+  skip: True  # [py<39]
   script: {{ PYTHON }} -m pip install -vv --no-deps --no-build-isolation .
 
 requirements:
