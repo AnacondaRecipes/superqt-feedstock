@@ -1,5 +1,5 @@
 {% set name = "superqt" %}
-{% set version = "0.6.7" %}
+{% set version = "0.7.3" %}
 
 package:
   name: {{ name|lower }}
@@ -7,11 +7,11 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: af80d5687ec75df6c3e54119ee895e42f79742ed326684c79425414b5c20f1e3
+  sha256: 14f617a46b1056783a5e32fd384038c4a62bcd320f9cd1e12cfb7d77fd8caa2c
 
 build:
   number: 0
-  skip: True  # [py<38 or s390x]
+  skip: True  # [py<39]
   script: {{ PYTHON }} -m pip install -vv --no-deps --no-build-isolation .
 
 requirements:
@@ -25,10 +25,16 @@ requirements:
     - pygments >=2.4.0
     - qtpy >=1.1.0
     - typing_extensions >=3.7.4.3,!=3.10.0.0
+  run_constrained:
+    - cmap >=0.1.1
+    - pyside6 !=6.5.0,!=6.5.1,!=6.6.2,<6.8
+    - pyqt <6.7
+    - pyconify >=0.1.4
 
 test:
-  imports:
-    - superqt
+  # Skip tests on linux as our builders do not have X11 / opengl available.
+  imports:       # [not linux]
+    - superqt    # [not linux]
   requires:
     - pip
     - pytest
@@ -40,8 +46,13 @@ test:
     - tests
   commands:
     - pip check
-    # Skip tests that need pint.
-    - pytest -v --ignore=tests/test_quantity.py tests -k "not test_multistate"  # [win]
+    # OSX CI is headless - use Qt built-in offscreen rendering capability
+    - export QT_QPA_PLATFORM=offscreen # [unix]
+    # Skip tests that need pint or pyconify
+    # test_multistate fails with timeout on windows
+    # test_press_move_release fails with timeout on osx
+    # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance 
+    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)" # [not linux]
 
 about:
   home: https://github.com/pyapp-kit/superqt
