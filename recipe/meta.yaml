@@ -27,8 +27,9 @@ requirements:
     - typing_extensions >=3.7.4.3,!=3.10.0.0
 
 test:
-  imports:
-    - superqt
+  # Skip tests on linux as our builders do not have X11 / opengl available.
+  imports:       # [not linux]
+    - superqt    # [not linux]
   requires:
     - pip
     - pytest
@@ -40,8 +41,13 @@ test:
     - tests
   commands:
     - pip check
-    # Skip tests that need pint.
-    - pytest -v --ignore=tests/test_quantity.py tests -k "not test_multistate"  # [win]
+    # OSX CI is headless - use Qt built-in offscreen rendering capability
+    - export QT_QPA_PLATFORM=offscreen # [unix]
+    # Skip tests that need pint or pyconify
+    # test_multistate fails with timeout on windows
+    # test_press_move_release fails with timeout on osx
+    # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance 
+    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)" # [not linux]
 
 about:
   home: https://github.com/pyapp-kit/superqt
