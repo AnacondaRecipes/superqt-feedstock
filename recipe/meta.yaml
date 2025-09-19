@@ -1,18 +1,18 @@
 {% set name = "superqt" %}
-{% set version = "0.7.3" %}
+{% set version = "0.7.6" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 14f617a46b1056783a5e32fd384038c4a62bcd320f9cd1e12cfb7d77fd8caa2c
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 822fdba71dc391929c9d3db839f78ca2a861e2f2876926f969a288dfb2a9787e
 
 build:
   number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   skip: True  # [py<39]
-  script: {{ PYTHON }} -m pip install -vv --no-deps --no-build-isolation .
 
 requirements:
   host:
@@ -23,27 +23,28 @@ requirements:
   run:
     - python
     - pygments >=2.4.0
-    - qtpy >=1.1.0
-    - typing_extensions >=3.7.4.3,!=3.10.0.0
+    - qtpy >=2.4.0
+    - typing_extensions >=4.5.0  # [py<313]
+    - typing_extensions >=4.12.0  # [py>=313]
   run_constrained:
-    - cmap >=0.1.1
-    - pyside6 !=6.5.0,!=6.5.1,!=6.6.2,<6.8
-    - pyqt <6.7
-    - pyconify >=0.1.4
+    # cmap
+    - cmap >=0.2
+    # pyqt6
+    - pyqt6 >=6.4.0,!=6.6  # [py<312]
+    - pyqt6 >=6.7.0,!=6.6  # [py>=312]
+    # pyside6
+    - pyside6 >=6.4.0,!=6.5.0,!=6.5.1,!=6.6.2  # [py<312]
+    - pyside6 >=6.7.0  # [py>=312]
+    # quantity
+    - pint>=0.21
 
+# Skip tests on linux as our builders do not have X11 / opengl available.
 test:
-  # Skip tests on linux as our builders do not have X11 / opengl available.
-  imports:       # [not linux]
-    - superqt    # [not linux]
-  requires:
-    - pip
-    - pytest
-    - pytest-qt
-    - pyqt
-    - numpy
   source_files:
     - pyproject.toml
     - tests
+  imports:       # [not linux]
+    - superqt    # [not linux]
   commands:
     - pip check
     # OSX CI is headless - use Qt built-in offscreen rendering capability
@@ -53,6 +54,12 @@ test:
     # test_press_move_release fails with timeout on osx
     # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance 
     - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)" # [not linux]
+  requires:
+    - pip
+    - pytest
+    - pytest-qt
+    - pyqt
+    - numpy
 
 about:
   home: https://github.com/pyapp-kit/superqt
@@ -74,3 +81,5 @@ extra:
     - jni
     - sofroniewn
     - tlambert03
+  skip-true:
+    - missing_imports_or_run_test_py
