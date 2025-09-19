@@ -24,7 +24,8 @@ requirements:
     - python
     - pygments >=2.4.0
     - qtpy >=2.4.0
-    - typing_extensions >=4.5.0
+    - typing_extensions >=4.5.0  # [py<313]
+    - typing_extensions >=4.12.0  # [py>=313]
   run_constrained:
     # cmap
     - cmap >=0.2
