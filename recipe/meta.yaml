@@ -1,18 +1,19 @@
 {% set name = "superqt" %}
-{% set version = "0.7.6" %}
+{% set version = "0.8.1" %}
 
+# Skip tests on linux as our builders do not have X11 / opengl available.
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 822fdba71dc391929c9d3db839f78ca2a861e2f2876926f969a288dfb2a9787e
+  sha256: d9a567e621c2dea0ce4c6c2f7e2237c09c52255e9848ca1594c9a957e2ecb08a
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  skip: True  # [py<39]
+  skip: true  # [py<39]
 
 requirements:
   host:
@@ -38,22 +39,21 @@ requirements:
     # quantity
     - pint>=0.21
 
-# Skip tests on linux as our builders do not have X11 / opengl available.
 test:
   source_files:
     - pyproject.toml
     - tests
-  imports:       # [not linux]
-    - superqt    # [not linux]
+  imports:  # [not linux]
+    - superqt  # [not linux]
   commands:
     - pip check
     # OSX CI is headless - use Qt built-in offscreen rendering capability
-    - export QT_QPA_PLATFORM=offscreen # [unix]
+    - export QT_QPA_PLATFORM=offscreen  # [unix]
     # Skip tests that need pint or pyconify
     # test_multistate fails with timeout on windows
     # test_press_move_release fails with timeout on osx
-    # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance 
-    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)" # [not linux]
+    # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance
+    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)"  # [not linux]
   requires:
     - pip
     - pytest
@@ -70,7 +70,7 @@ about:
   description: |
     Superqt aims to provide high-quality community-contributed Qt widgets
     and components for PyQt & PySide that are not provided in the native
-    QtWidgets module, such as range sliders, float sliders, and other 
+    QtWidgets module, such as range sliders, float sliders, and other
     extended widgets.
   dev_url: https://github.com/pyapp-kit/superqt
   doc_url: https://pyapp-kit.github.io/superqt
