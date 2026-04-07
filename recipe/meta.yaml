@@ -1,7 +1,6 @@
 {% set name = "superqt" %}
 {% set version = "0.8.1" %}
 
-# Skip tests on linux as our builders do not have X11 / opengl available.
 package:
   name: {{ name|lower }}
   version: {{ version }}
@@ -39,6 +38,7 @@ requirements:
     # quantity
     - pint>=0.21
 
+# Skip tests on linux as our builders do not have X11 / opengl available.
 test:
   source_files:
     - pyproject.toml
