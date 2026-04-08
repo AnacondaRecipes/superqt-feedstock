@@ -40,13 +40,12 @@ requirements:
     # quantity
     - pint >=0.21
 
-# Skip tests on linux as our builders do not have X11 / opengl available.
 test:
   source_files:
     - pyproject.toml
     - tests
-  imports:  # [not linux]
-    - superqt  # [not linux]
+  imports:
+    - superqt
   commands:
     - pip check
     # OSX CI is headless - use Qt built-in offscreen rendering capability
@@ -55,7 +54,7 @@ test:
     # test_multistate fails with timeout on windows
     # test_press_move_release fails with timeout on osx
     # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance
-    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)"  # [not linux]
+    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)"
   requires:
     - pip
     - pytest
