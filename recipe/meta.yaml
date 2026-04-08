@@ -30,7 +30,7 @@ requirements:
     # cmap
     - cmap >=0.2
     # pyqt5
-    - pyqt5 >=5.15.10
+    - pyqt >=5.15.10,!=6.6.*
     # pyqt6
     - pyqt6 >=6.4.0,!=6.6.*  # [py<312]
     - pyqt6 >=6.7.0,!=6.6.*  # [py>=312]
