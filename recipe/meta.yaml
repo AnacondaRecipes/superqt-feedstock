@@ -49,7 +49,7 @@ test:
   commands:
     - pip check
     # OSX CI is headless - use Qt built-in offscreen rendering capability
-    - export QT_QPA_PLATFORM=offscreen  # [unix]
+    #- export QT_QPA_PLATFORM=offscreen  # [unix]
     # Skip tests that need pint or pyconify
     # test_multistate fails with timeout on windows
     # test_press_move_release fails with timeout on osx
