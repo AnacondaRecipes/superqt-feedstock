@@ -38,7 +38,7 @@ requirements:
     - pyside6 >=6.4.0,!=6.5.0,!=6.5.1,!=6.6.2  # [py<312]
     - pyside6 >=6.7.0  # [py>=312]
     # quantity
-    - pint>=0.21
+    - pint >=0.21
 
 # Skip tests on linux as our builders do not have X11 / opengl available.
 test:
