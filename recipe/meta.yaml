@@ -1,5 +1,5 @@
 {% set name = "superqt" %}
-{% set version = "0.7.6" %}
+{% set version = "0.8.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,12 +7,12 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 822fdba71dc391929c9d3db839f78ca2a861e2f2876926f969a288dfb2a9787e
+  sha256: d9a567e621c2dea0ce4c6c2f7e2237c09c52255e9848ca1594c9a957e2ecb08a
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  skip: True  # [py<39]
+  skip: true  # [py<310]
 
 requirements:
   host:
@@ -29,31 +29,32 @@ requirements:
   run_constrained:
     # cmap
     - cmap >=0.2
+    # pyqt5
+    - pyqt >=5.15.10,!=6.6.*
     # pyqt6
-    - pyqt6 >=6.4.0,!=6.6  # [py<312]
-    - pyqt6 >=6.7.0,!=6.6  # [py>=312]
+    - pyqt6 >=6.4.0,!=6.6.*  # [py<312]
+    - pyqt6 >=6.7.0,!=6.6.*  # [py>=312]
     # pyside6
     - pyside6 >=6.4.0,!=6.5.0,!=6.5.1,!=6.6.2  # [py<312]
     - pyside6 >=6.7.0  # [py>=312]
     # quantity
-    - pint>=0.21
+    - pint >=0.21
 
-# Skip tests on linux as our builders do not have X11 / opengl available.
 test:
   source_files:
     - pyproject.toml
     - tests
-  imports:       # [not linux]
-    - superqt    # [not linux]
+  imports:
+    - superqt
   commands:
     - pip check
     # OSX CI is headless - use Qt built-in offscreen rendering capability
-    - export QT_QPA_PLATFORM=offscreen # [unix]
+    - export QT_QPA_PLATFORM=offscreen  # [unix]
     # Skip tests that need pint or pyconify
     # test_multistate fails with timeout on windows
     # test_press_move_release fails with timeout on osx
-    # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance 
-    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)" # [not linux]
+    # test_wrap_text and test_wrapped_eliding_label mail fail test tolerance
+    - pytest -v --ignore=tests/test_quantity.py --ignore=tests/test_iconify.py tests -k "not (test_multistate or test_wrapped_eliding_label or test_wrap_text or test_press_move_release)"
   requires:
     - pip
     - pytest
@@ -70,7 +71,7 @@ about:
   description: |
     Superqt aims to provide high-quality community-contributed Qt widgets
     and components for PyQt & PySide that are not provided in the native
-    QtWidgets module, such as range sliders, float sliders, and other 
+    QtWidgets module, such as range sliders, float sliders, and other
     extended widgets.
   dev_url: https://github.com/pyapp-kit/superqt
   doc_url: https://pyapp-kit.github.io/superqt
